@@ -2,13 +2,13 @@ import fs from "fs";
 
 export default class ProductManager {
 
-    constructor (rutaArchivo) {
+    constructor(rutaArchivo) {
         this.path = rutaArchivo
     }
 
     getProducts = async () => {
-        if (fs.existsSync(this.path)){
-            const datos = await fs.promises.readFile (this.path, "utf-8")
+        if (fs.existsSync(this.path)) {
+            const datos = await fs.promises.readFile(this.path, "utf-8")
             const products = JSON.parse(datos)
             return products
         } else {
@@ -19,24 +19,24 @@ export default class ProductManager {
     addProduct = async ({
         title,
         description,
-        price,
-        thumbnail,
         code,
-        stock
+        price,
+        stock,
+        category,
+        status = true,
+        thumbnails = []
     }) => {
 
-        const evaluarCamposObligatorios = () => {
-            if ( !(title && description && price && thumbnail && code && stock) ) {
-                console.log(`Los campos: title, description, price, thumbnail, code y stock son oblgatorios. Por favor completelos`)
-                return
-            }
+        if (!(title && description && code && price && stock && category)) {
+            console.log(`Los campos: title, description, code, price, stock y category son obligatorios. Por favor completelos`)
+            return
         }
-        evaluarCamposObligatorios()
+
 
         const products = await this.getProducts()
 
-        const evaluarCode = await products.findIndex ( p => p.code === code )
-        if ( evaluarCode !== -1 ) {
+        const evaluarCode = await products.findIndex(p => p.code === code)
+        if (evaluarCode !== -1) {
             console.log(`El campo code: ${code} ya existe. Por favor elija otro`)
             return
         }
@@ -44,13 +44,15 @@ export default class ProductManager {
         const product = {
             title,
             description,
-            price,
-            thumbnail,
             code,
-            stock
+            price,
+            stock,
+            category,
+            status,
+            thumbnails
         }
 
-        if ( products.length === 0 ) {
+        if (products.length === 0) {
             product.id = 1
         } else {
             product.id = products[products.length - 1].id + 1
@@ -58,45 +60,45 @@ export default class ProductManager {
 
         products.push(product)
 
-        await fs.promises.writeFile( this.path, JSON.stringify(products, null, "\t") )
+        await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"))
 
         return product
     }
 
-    getProductById = async ( idProduct ) => {
+    getProductById = async (idProduct) => {
         const products = await this.getProducts()
-        const productIndex = await products.findIndex ( p => p.id === idProduct )
-        if ( productIndex === -1 ) {
+        const productIndex = await products.findIndex(p => p.id === idProduct)
+        if (productIndex === -1) {
             console.error(`Product: not found`)
         } else {
             return products[productIndex]
         }
     }
 
-    updateProduct = async ( idProduct, campoActualizado ) =>{
+    updateProduct = async (idProduct, campoActualizado) => {
 
         const products = await this.getProducts()
 
-        const productIndex = await products.findIndex ( p => p.id === idProduct )
+        const productIndex = await products.findIndex(p => p.id === idProduct)
 
-        if ( productIndex !== -1 ) {
+        if (productIndex !== -1) {
             products[productIndex] = { ...products[productIndex], ...campoActualizado }
-            await fs.promises.writeFile( this.path, JSON.stringify(products, null, "\t") )
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"))
             return products[productIndex]
         } else {
             console.error(`Product: not found`)
         }
     }
 
-    deleteProduct = async ( idProduct ) => {
+    deleteProduct = async (idProduct) => {
 
         const products = await this.getProducts()
 
-        const productIndex = await products.findIndex ( p => p.id === idProduct )
-        
-        if ( productIndex !== -1 ) {
-            products.splice( productIndex, 1 )
-            await fs.promises.writeFile( this.path, JSON.stringify(products, null, "\t") )
+        const productIndex = await products.findIndex(p => p.id === idProduct)
+
+        if (productIndex !== -1) {
+            products.splice(productIndex, 1)
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"))
             return products
         } else {
             console.error(`Product: not found`)
@@ -126,7 +128,7 @@ await addProduct({
     title: "producto prueba 1",
     description: "este es un producto de prueba",
     price: 200,
-    thumbnail: "sin imagen",
+    thumbnails: "sin imagen",
     code: "abc1",
     stock: 25
 }) */
