@@ -23,7 +23,7 @@ router.get('/:pid', async (req, res) => {
 
 // POST product
 router.post('/', uploader.single('file'), async (req, res) => {
-    if(!req.file) return res.status(400).send({status: 'error', error: 'No se guardo la imagen'})
+    if(!req.file) return res.status(400).send({status: 'error', error: 'La imagen es requerida para crear el producto'})
     let product = req.body
     product.detail = req.file.path
     const addProduct = async (product) => {
