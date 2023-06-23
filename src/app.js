@@ -35,7 +35,12 @@ socketServer.on('connection', socket => {
     console.log('Inicio la comunicación')
     socket.on('addProduct', async (newProduct) => {
         await pm.addProduct(newProduct)
-        const newProducts = await pm.getProducts()
-        socket.emit('newProducts', newProducts)
+        const newProductsAfterAdd = await pm.getProducts()
+        socket.emit('newProductsAfterAdd', newProductsAfterAdd)
+    })
+    socket.on('deleteProduct', async (idProduct) => {
+        await pm.deleteProduct(idProduct)
+        const newProductsAfterDelete = await pm.getProducts()
+        socket.emit('newProductsAfterDelete', newProductsAfterDelete)
     })
 })

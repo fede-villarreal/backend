@@ -110,14 +110,25 @@
 		"id": 10
 	},
 	{
-		"title": "Nuevo producto desde Formulario",
+		"title": "Producto desde formulario 1",
 		"description": "producto desde formulario",
-		"code": "pfrom123",
-		"price": "50",
-		"stock": "5",
+		"code": "pform1",
+		"price": "2",
+		"stock": "2",
 		"category": "prueba",
 		"status": "true",
 		"thumbnails": "",
 		"id": 11
+	},
+	{
+		"title": "Producto desde formulario 2",
+		"description": "producto desde formulario",
+		"code": "pform2",
+		"price": "2",
+		"stock": "2",
+		"category": "prueba",
+		"status": "true",
+		"thumbnails": "",
+		"id": 12
 	}
 ]
