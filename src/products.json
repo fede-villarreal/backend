@@ -108,5 +108,16 @@
 		"status": true,
 		"thumbnails": [],
 		"id": 10
+	},
+	{
+		"title": "Nuevo producto desde Formulario",
+		"description": "producto desde formulario",
+		"code": "pfrom123",
+		"price": "50",
+		"stock": "5",
+		"category": "prueba",
+		"status": "true",
+		"thumbnails": "",
+		"id": 11
 	}
 ]

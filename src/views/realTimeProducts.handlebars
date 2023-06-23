@@ -1,0 +1,48 @@
+<div>
+    <h1>Lista de productos actualizada en tiempo real:</h1>
+    <h2>Total de productos: {{products.length}}</h2>
+    <div id="productsContainer">
+        {{#each products}}
+        <div>
+            <p>Product id: {{this.id}}</p>
+            <p>Name: {{this.title}}</p>
+            <p>Description: {{this.description}}</p>
+        </div>
+        {{/each}}
+    </div>
+    <!-- Inicio formulario -->
+    <h2>Agregar nuevo producto</h2>
+    <form id="form-addProducts">
+        <!-- Input de texto para Title -->
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" placeholder="Ingresa el nombre del producto" required>
+        <!-- Input de texto para Description -->
+        <label for="description">Description:</label>
+        <input type="text" name="description" id="description" placeholder="Ingresa la descripcion del producto"
+            required>
+        <!-- Input de texto para Code -->
+        <label for="code">Code:</label>
+        <input type="text" name="code" id="code" placeholder="Ingresa el código del producto" required>
+        <!-- Input de numero para Price -->
+        <label for="price">Price:</label>
+        <input type="number" name="price" id="price" placeholder="Ingresa el precio del producto" required>
+        <!-- Input de numero para Stock -->
+        <label for="stock">Stock:</label>
+        <input type="number" name="stock" id="stock" placeholder="Ingresa el cantidad en stock del producto" required>
+        <!-- Input de texto para Category -->
+        <label for="category">Category:</label>
+        <input type="text" name="category" id="category" placeholder="Ingresa la categoria del producto" required>
+        <!-- Input de texto para Status -->
+        <label for="status">Status:</label>
+        <input type="text" name="status" id="status" placeholder="Ingresa el status del producto" required>
+        <!-- Input de texto para Thumbnails -->
+        <label for="thumbnails">Thumbnails:</label>
+        <input type="text" name="thumbnails" id="thumbnails" placeholder="Ingresa la url de la imagen">
+        <!-- Boton enviar -->
+        <input type="submit" id="enviar">
+</div>
+<!-- Fin contenedor botones -->
+</form>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/realTimeProducts.js"></script>
