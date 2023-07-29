@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { uploader } from "../utils.js";
-import ProductManager from "../product_manager/product_manager.js";
+import { uploader } from "../../utils.js";
+import ProductManager from "../../dao/fileManagers/product_manager/product_manager.js";
 
 const router = Router();
 const pm = new ProductManager('./src/products.json')

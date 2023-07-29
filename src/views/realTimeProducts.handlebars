@@ -3,11 +3,12 @@
     <h2>Total de productos: {{products.length}}</h2>
     <div id="productsContainer">
         {{#each products}}
+        <h3>Producto:</h3>
         <div>
-            <p>Product id: {{this.id}}</p>
+            <p>Product id: {{this._id}}</p>
             <p>Name: {{this.title}}</p>
             <p>Description: {{this.description}}</p>
-            <button id="button__delete--{{this.id}}" class="button__deleteProduct">Delete</button>
+            <button id="button__delete--{{this._id}}" class="button__deleteProduct">Delete</button>
         </div>
         {{/each}}
     </div>
@@ -45,5 +46,6 @@
 <!-- Fin contenedor botones -->
 </form>
 </div>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/realTimeProducts.js"></script>

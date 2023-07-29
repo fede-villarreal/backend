@@ -8,21 +8,39 @@ const deleteProduct = () => {
     const buttonDeleteProduct = document.querySelectorAll('.button__deleteProduct')
     buttonDeleteProduct.forEach((button) => {
         button.addEventListener('click', () => {
-            const idProduct = Number(button.id.slice(16))
-            socket.emit('deleteProduct', idProduct)
+            const idProduct = button.id.slice(16)
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                    socket.emit('deleteProduct', idProduct)
+                }
+            })
         })
     })
 }
 deleteProduct()
 socket.on('newProductsAfterDelete', (newProductsAfterDelete) => {
     productsContainer.innerHTML = "";
-    newProductsAfterDelete.map( p => {
-        productsContainer.innerHTML+= `
+    newProductsAfterDelete.map(p => {
+        productsContainer.innerHTML += `
+            <h3>Producto:</h3>
             <div>
-                <p>Product id: ${p.id}</p>
+                <p>Product id: ${p._id}</p>
                 <p>Name: ${p.title}</p>
                 <p>Description: ${p.description}</p>
-                <button id="button__delete--${p.id}" class="button__deleteProduct">Delete</button>
+                <button id="button__delete--${p._id}" class="button__deleteProduct">Delete</button>
             </div>
         `
     })
@@ -39,13 +57,13 @@ formAddProduct.addEventListener('submit', (e) => {
 })
 socket.on('newProductsAfterAdd', (newProductsAfterAdd) => {
     productsContainer.innerHTML = "";
-    newProductsAfterAdd.map( p => {
-        productsContainer.innerHTML+= `
+    newProductsAfterAdd.map(p => {
+        productsContainer.innerHTML += `
             <div>
-                <p>Product id: ${p.id}</p>
+                <p>Product id: ${p._id}</p>
                 <p>Name: ${p.title}</p>
                 <p>Description: ${p.description}</p>
-                <button id="button__delete--${p.id}" class="button__deleteProduct">Delete</button>
+                <button id="button__delete--${p._id}" class="button__deleteProduct">Delete</button>
             </div>
         `
     })

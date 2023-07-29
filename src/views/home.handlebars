@@ -2,8 +2,9 @@
     <h1>Lista de productos:</h1>
     <h2>Total de productos: {{products.length}}</h2>
     {{#each products}}
+        <h3>Producto:</h3>
         <div>
-            <p>Product id: {{this.id}}</p>
+            <p>Product id: {{this._id}}</p>
             <p>Name: {{this.title}}</p>
             <p>Description: {{this.description}}</p>
         </div>

@@ -1,0 +1,32 @@
+import productModel from "../models/products.js";
+
+export default class Products {
+    /* constructor(){
+        console.log('Trabajando con DB')
+    } */
+
+    getAll = async() => {
+        let products = await productModel.find().lean();
+        return products
+    }
+
+    getProduct = async (pid) => {
+        let product = await productModel.findOne({_id: pid})
+        return product
+    }
+
+    saveProducts = async (product) => {
+        let result = await productModel.create(product)
+        return result
+    }
+
+    updateProduct = async (pid, update) => {
+        let updatedProduct = await productModel.updateOne({_id: pid}, update)
+        return updatedProduct
+    }
+
+    deleteProduct = async (pid) => {
+        let deletedProduct = await productModel.deleteOne({_id: pid})
+        return deletedProduct
+    }
+}
