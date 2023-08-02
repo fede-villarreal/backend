@@ -5,9 +5,30 @@ const router = Router();
 
 const productManager = new Products();
 
-router.get('/', async (req, res) => {
-    let products = await productManager.getAll();
-    res.render('home', {products})
+// GET products with paginate
+router.get('/products', async (req, res) => {
+    const { limit = 10, page = 1, category, status, sort } = req.query;
+    let query = {}
+    if (category && status) {
+        query = {category, status}
+    } else if (category) {
+        query = {category}
+    } else if (status) {
+        query = {status}
+    }
+
+    const {docs, hasPrevPage, hasNextPage, prevPage, nextPage} = await productManager.getProductsPaginate(limit, page, query, sort);
+
+    let products = docs;
+
+    res.render('home', {
+        products,
+        status,
+        hasPrevPage, 
+        hasNextPage, 
+        prevPage, 
+        nextPage
+    })
 })
 
 

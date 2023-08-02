@@ -6,6 +6,7 @@ import handlebars from 'express-handlebars';
 import homeRouter from './routes/webSockets/viewsHome.router.js';
 import { Server } from 'socket.io';
 import realTimeProductsRouter from './routes/webSockets/viewsRealTimeProducts.router.js';
+import cartRouter from './routes/webSockets/viewsCart.router.js';
 /* import ProductManager from './dao/fileManagers/product_manager/product_manager.js'; */
 import mongoose from 'mongoose';
 import productsRouter from './routes/mongoDB/products.router.js';
@@ -47,6 +48,7 @@ app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'))
 app.use('/', homeRouter)
 app.use('/realtimeproducts', realTimeProductsRouter)
+app.use('/carts', cartRouter)
 
 // Escuchar la conexión
 socketServer.on('connection', socket => {

@@ -6,8 +6,22 @@ export default class Products {
     } */
 
     getAll = async() => {
-        let products = await productModel.find().lean();
+        let products = await productModel.find().lean()
         return products
+    }
+
+    getProductsPaginate = async(limit, page, query, sort) => {
+        let products = [];
+
+        if (sort) {
+            products = await productModel
+            .paginate(query, {limit, page, lean: true, sort: { price: sort} })
+        } else {
+            products = await productModel
+            .paginate(query, {limit, page, lean: true })
+        }
+
+        return products;
     }
 
     getProduct = async (pid) => {

@@ -18,7 +18,8 @@ export default class Carts {
     addProductToCart = async (cid, pid ) => {
         let cart = await cartModel.findOne({_id: cid})
 
-        const productIndex = cart.products.findIndex(p => String(p.product) === pid)
+        const productIndex = await cart.products.findIndex(p => String(p.product._id) === pid)
+
         if( productIndex === -1) {
             cart.products.push({product: pid})
         } else {
@@ -29,4 +30,59 @@ export default class Carts {
         return result
     }
 
+    deleteProductToCart = async (cid, pid) => {
+        let cart = await cartModel.findOne({_id: cid})
+
+        cart.products = cart.products.filter(p => String(p.product._id) !== pid)
+
+        let result = await cartModel.updateOne({_id: cid}, cart)
+        return result
+    }
+
+    addMultipleProducts = async (cid, listOfProducts) => {
+        let cart = await cartModel.findOne({_id: cid})
+
+        const loopEvaluation = async () => {
+            listOfProducts.forEach(async p => {
+                let pid = p.product;
+                let pQuantity = p.quantity;
+                
+                let productIndex = await cart.products.findIndex(p => String(p.product._id) === pid)
+                if( productIndex === -1) {
+                    cart.products.push({product: pid, quantity: pQuantity})
+                } else {
+                    cart.products[productIndex].quantity += p.quantity
+                }
+            });
+        }
+        await loopEvaluation()
+
+        let result = await cartModel.updateOne({_id: cid}, cart)
+        return result
+    }
+
+    updateQuantity = async (cid, pid, productQuantity) => {
+        let cart = await cartModel.findOne({_id: cid})
+        let pQuantity = productQuantity.quantity;
+
+        const productIndex = await cart.products.findIndex(p => String(p.product._id) === pid)
+        if( productIndex === -1) {
+            cart.products.push({product: pid, quantity: pQuantity})
+            console.log(cart.products)
+        } else {
+            cart.products[productIndex].quantity += pQuantity
+        }
+
+        let result = await cartModel.updateOne({_id: cid}, cart)
+        return result
+    }
+
+    emptyCart = async (cid) => {
+        let cart = await cartModel.findOne({_id: cid})
+
+        cart.products = [];
+
+        let result = await cartModel.updateOne({_id: cid}, cart)
+        return result
+    }
 }

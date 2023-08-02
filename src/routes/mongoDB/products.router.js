@@ -1,14 +1,22 @@
 import { Router } from "express";
 import Products from "../../dao/dbManagers/product_manager.js";
-import { ObjectId } from "mongodb";
 
 const router = Router()
 const productManager = new Products();
 
-// GET products
+// GET products with paginate
 router.get('/', async (req, res) => {
+    const { limit = 10, page = 1, category, status, sort } = req.query;
+    let query = {}
+    if (category && status) {
+        query = {category, status}
+    } else if (category) {
+        query = {category}
+    } else if (status) {
+        query = {status}
+    }
 
-    const products = await productManager.getAll();
+    const products = await productManager.getProductsPaginate(limit, page, query, sort);
     if (!products) return res.send({status: 'error', error: "No se encontraron productos"})
 
     res.send({ status: 'success', payload: products })
@@ -17,7 +25,7 @@ router.get('/', async (req, res) => {
 // GET product by ID
 router.get('/:pid', async (req, res) => {
     let { pid } = req.params
-    if ( pid.length !== 24 ) return res.send({status: 'error', error: "El id del producto es incorrecto"})
+    if ( pid.length !== 24 ) return res.send({status: 'error', error: "El id del producto debe tener 24 digitos"})
 
     const product = await productManager.getProduct(pid)
     if (!product) return res.send({status: 'error', error: "Producto no encontrado"})
@@ -50,7 +58,7 @@ router.post('/', async (req, res) => {
 // PUT product
 router.put('/:pid', async (req, res) => {
     let { pid } = req.params;
-    if ( pid.length !== 24 ) return res.send({status: 'error', error: "El id del producto es incorrecto"})
+    if ( pid.length !== 24 ) return res.send({status: 'error', error: "El id del producto debe tener 24 digitos"})
 
     let fieldsToUpdate = req.body;
 
@@ -68,7 +76,7 @@ router.put('/:pid', async (req, res) => {
 // DELETE product
 router.delete('/:pid', async (req, res) => {
     let { pid } = req.params;
-    if ( pid.length !== 24 ) return res.send({status: 'error', error: "El id del producto es incorrecto"})
+    if ( pid.length !== 24 ) return res.send({status: 'error', error: "El id del producto debe tener 24 digitos"})
 
     const product = await productManager.getProduct(pid)
     if (!product) return res.send({status: 'error', error: "Producto no encontrado"})
