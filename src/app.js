@@ -14,6 +14,10 @@ import Products from './dao/dbManagers/product_manager.js';
 import cartsRouter from './routes/mongoDB/carts.router.js';
 // Libreria para ocultar datos sensibles
 import "dotenv/config";
+// Sesiones:
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import sessionRouter from './routes/mongoDB/sessions.router.js';
 
 const app = express();
 const PORT = 8080;
@@ -26,7 +30,10 @@ const pm = new Products();
 
 // Conectar con DB
 const environment = async () => {
-    await mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.DB_NAME}.cbynjdo.mongodb.net/${process.env.COLLECTION_NAME}?retryWrites=true&w=majority`)
+    await mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.DB_NAME}.cbynjdo.mongodb.net/${process.env.COLLECTION_NAME}?retryWrites=true&w=majority`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
 }
 environment();
 
@@ -38,8 +45,21 @@ const socketServer = new Server(httpserver)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
+// Session:
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.DB_NAME}.cbynjdo.mongodb.net/${process.env.COLLECTION_NAME}?retryWrites=true&w=majority`,
+        mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
+        ttl: 3600
+    }),
+    secret: 'secret1234',
+    resave: false,
+    saveUninitialized: false
+}))
+
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
+app.use('/api/sessions', sessionRouter)
 
 // Configuración plantillas
 app.engine('handlebars', handlebars.engine());

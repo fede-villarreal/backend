@@ -1,6 +1,16 @@
 <div>
-    <h1>Lista de productos:</h1>
-    <h2>Total de productos: {{products.length}}</h2>
+    <h1>Bienvenido!:</h1>
+    <h2>Usuario logueado con éxito</h2>
+    <div>
+        <p>Nombre: {{user.name}}</p>
+        <p>Email: {{user.email}}</p>
+        <p>Edad: {{user.age}}</p>
+        <p>Rol: {{user.rol}}</p>
+    </div>
+    <button id="logout">Cerrar sesión</button>
+
+    <h2>Lista de productos:</h2>
+    <h3>Total de productos: {{products.length}}</h3>
     {{#each products}}
         <h3>Producto:</h3>
         <div>
@@ -26,3 +36,4 @@
         <a href="/products?page={{nextPage}}"><button>Siguiente</button></a>
     {{/if}}
 </div>
+<script src="/js/logout.js"></script>

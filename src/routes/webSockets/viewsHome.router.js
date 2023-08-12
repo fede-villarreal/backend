@@ -5,28 +5,42 @@ const router = Router();
 
 const productManager = new Products();
 
+// Login:
+router.get('/', (req, res) => {
+    res.render('login')
+})
+
+// Registro:
+router.get('/register', (req, res) => {
+    res.render('register')
+})
+
 // GET products with paginate
 router.get('/products', async (req, res) => {
+
+    if (!req.session.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
+
     const { limit = 10, page = 1, category, status, sort } = req.query;
     let query = {}
     if (category && status) {
-        query = {category, status}
+        query = { category, status }
     } else if (category) {
-        query = {category}
+        query = { category }
     } else if (status) {
-        query = {status}
+        query = { status }
     }
 
-    const {docs, hasPrevPage, hasNextPage, prevPage, nextPage} = await productManager.getProductsPaginate(limit, page, query, sort);
+    const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = await productManager.getProductsPaginate(limit, page, query, sort);
 
     let products = docs;
 
     res.render('home', {
+        user: req.session.user,
         products,
         status,
-        hasPrevPage, 
-        hasNextPage, 
-        prevPage, 
+        hasPrevPage,
+        hasNextPage,
+        prevPage,
         nextPage
     })
 })
