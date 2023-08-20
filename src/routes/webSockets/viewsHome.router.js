@@ -9,6 +9,9 @@ const productManager = new Products();
 router.get('/', (req, res) => {
     res.render('login')
 })
+router.get('/faillogin', (req, res) => {
+    res.render('faillogin')
+})
 
 // Registro:
 router.get('/register', (req, res) => {
@@ -18,7 +21,7 @@ router.get('/register', (req, res) => {
 // GET products with paginate
 router.get('/products', async (req, res) => {
 
-    if (!req.session.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
+    if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
 
     const { limit = 10, page = 1, category, status, sort } = req.query;
     let query = {}

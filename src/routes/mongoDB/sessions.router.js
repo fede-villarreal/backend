@@ -1,51 +1,30 @@
 import { Router } from "express";
-import userModel from '../../dao/models/user.js';
+import passport from "passport";
 
 const router = Router();
 
 // Registrar usuario:
-router.post('/register', async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body;
-
-    const exist = await userModel.findOne({ email });
-    if (exist) return res.status(400).send({ status: 'error', error: 'El mail ya se encuentra registrado' })
-
-    const user = {
-        first_name,
-        last_name,
-        email,
-        age,
-        password
-    }
-
-    let result = await userModel.create(user);
-    res.send({ status: 'success', payload: result, message: 'Usuario registrado con éxito!' })
+router.post('/register', passport.authenticate('register', {failureRedirect: '/failregister'}), async (req, res) => {
+    res.send({status: 'succcess', message: 'User registered'})
+})
+router.get('/failregister', async (req, res) => {
+    console.log('Failed Strategy');
+    res.send({error: 'Failed'})
 })
 
 // Loguear usuario:
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    if (email === 'adminCoder@coder.com' && password === 'adminCod3r123') {
-        req.session.user = {
-            name: `CoderHouse`,
-            email: 'adminCoder@coder.com',
-            age: 9,
-            rol: 'admin'
-        }
-        return res.send({ status: 'success', payload: req.session.user, message: 'Logueado con éxito' })
-    }
-
-    const user = await userModel.findOne({ email, password })
-    if (!user) return res.status(401).send({ status: 'error', error: 'El mail o la contraseña ingresada son incorrectos' })
-
+router.post('/login', passport.authenticate('login', {failureRedirect: '/faillogin'}), async (req, res) => {
+    if(!req.user) return res.status(400).send({status: 'error', error: 'Incorect Password'})
     req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age,
-        rol: 'usuario'
+        name: `${req.user.first_name} ${req.user.last_name}`,
+        age: req.user.age,
+        email: req.user.email,
+        rol: 'user'
     }
-    res.send({ status: 'success', payload: req.session.user, message: 'Logueado con éxito' })
+    res.send({status: 'success', payload: req.user})
+})
+router.get('/faillogin', async (req, res) => {
+    res.send({error: 'failed'})
 })
 
 // Cerrar sesión:

@@ -15,10 +15,9 @@ form.addEventListener('submit', e => {
             'Content-Type': 'application/json'
         }
     }).then(result => {
-        if(result.status === 200){
+        console.log(result.status)
+        /* if(result.status === 200){
             window.location.replace('/products')
-        } else if (result.status === 401) {
-            alert('El mail o la contraseña son incorrectos')
-        }
+        } */
     })
 })

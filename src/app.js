@@ -18,6 +18,9 @@ import "dotenv/config";
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import sessionRouter from './routes/mongoDB/sessions.router.js';
+// Passport
+import passport from 'passport';
+import initializePassport from './config/passport.config.js';
 
 const app = express();
 const PORT = 8080;
@@ -56,6 +59,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
