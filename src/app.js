@@ -53,7 +53,7 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.DB_NAME}.cbynjdo.mongodb.net/${process.env.COLLECTION_NAME}?retryWrites=true&w=majority`,
         mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
-        ttl: 3600
+        ttl: 15
     }),
     secret: 'secret1234',
     resave: false,

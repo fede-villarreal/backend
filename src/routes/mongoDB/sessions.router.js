@@ -5,7 +5,7 @@ const router = Router();
 
 // Registrar usuario:
 router.post('/register', passport.authenticate('register', {failureRedirect: '/failregister'}), async (req, res) => {
-    res.send({status: 'succcess', message: 'User registered'})
+    res.redirect('/')
 })
 router.get('/failregister', async (req, res) => {
     console.log('Failed Strategy');
@@ -21,7 +21,7 @@ router.post('/login', passport.authenticate('login', {failureRedirect: '/faillog
         email: req.user.email,
         rol: 'user'
     }
-    res.send({status: 'success', payload: req.user})
+    res.redirect('/products')
 })
 router.get('/faillogin', async (req, res) => {
     res.send({error: 'failed'})
@@ -40,7 +40,12 @@ router.get('/logout', (req, res) => {
 // Loguear con GitHub:
 router.get('/github', passport.authenticate('github', {scope: ['user: email']}), async (req, res) => {})
 router.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/'}), async (req, res) => {
-    req.session.user = req.user
+    req.session.user = {
+        name: `${req.user.first_name} ${req.user.last_name}`,
+        age: req.user.age,
+        email: req.user.email,
+        rol: 'user'
+    }
     res.redirect('/products')
 })
 

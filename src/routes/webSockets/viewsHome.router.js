@@ -17,6 +17,9 @@ router.get('/faillogin', (req, res) => {
 router.get('/register', (req, res) => {
     res.render('register')
 })
+router.get('/failregister', (req, res) => {
+    res.render('failregister')
+})
 
 // GET products with paginate
 router.get('/products', async (req, res) => {
