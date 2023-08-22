@@ -15,9 +15,16 @@ form.addEventListener('submit', e => {
             'Content-Type': 'application/json'
         }
     }).then(result => {
-        console.log(result.status)
-        /* if(result.status === 200){
+        if(result.status === 200){
             window.location.replace('/products')
-        } */
+        }
+    })
+
+    fetch('/api/sessions/github', {
+        method: 'GET',
+        body: JSON.stringify(obj),
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
 })

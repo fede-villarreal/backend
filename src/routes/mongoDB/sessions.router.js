@@ -14,7 +14,7 @@ router.get('/failregister', async (req, res) => {
 
 // Loguear usuario:
 router.post('/login', passport.authenticate('login', {failureRedirect: '/faillogin'}), async (req, res) => {
-    if(!req.user) return res.status(400).send({status: 'error', error: 'Incorect Password'})
+    if(!req.user) return res.status(400).send({status: 'error', error: 'Incorrect Password'})
     req.session.user = {
         name: `${req.user.first_name} ${req.user.last_name}`,
         age: req.user.age,
@@ -37,5 +37,11 @@ router.get('/logout', (req, res) => {
     })
 })
 
+// Loguear con GitHub:
+router.get('/github', passport.authenticate('github', {scope: ['user: email']}), async (req, res) => {})
+router.get('/githubcallback', passport.authenticate('github', {failureRedirect: '/'}), async (req, res) => {
+    req.session.user = req.user
+    res.redirect('/products')
+})
 
 export default router;
