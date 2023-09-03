@@ -5,7 +5,7 @@ import viewsRealTimeProducts from './webSockets/viewsRealTimeProducts.router.js'
 
 const router = Router();
 
-router.use('', viewsHome)
+router.use('/', viewsHome)
 router.use('/carts', viewsCart)
 router.use('/realtimeproducts', viewsRealTimeProducts)
 

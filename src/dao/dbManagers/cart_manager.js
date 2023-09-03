@@ -68,7 +68,6 @@ export default class Carts {
         const productIndex = await cart.products.findIndex(p => String(p.product._id) === pid)
         if( productIndex === -1) {
             cart.products.push({product: pid, quantity: pQuantity})
-            console.log(cart.products)
         } else {
             cart.products[productIndex].quantity += pQuantity
         }
