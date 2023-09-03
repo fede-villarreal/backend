@@ -1,7 +1,8 @@
 <div>
     <h1>Lista de productos actualizada en tiempo real:</h1>
-    <h2>Total de productos: {{products.length}}</h2>
+
     <div id="productsContainer">
+        <h2>Total de productos: {{products.length}}</h2>
         {{#each products}}
         <h3>Producto:</h3>
         <div>
@@ -13,6 +14,7 @@
             <button id="button__delete--{{this._id}}" class="button__deleteProduct">Delete</button>
         </div>
         {{/each}}
+
     </div>
     <!-- Inicio formulario -->
     <h2>Agregar nuevo producto</h2>

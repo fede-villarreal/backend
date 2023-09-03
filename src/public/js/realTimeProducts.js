@@ -32,7 +32,7 @@ const deleteProduct = () => {
 }
 deleteProduct()
 socket.on('newProductsAfterDelete', (newProductsAfterDelete) => {
-    productsContainer.innerHTML = "";
+    productsContainer.innerHTML = `<h2>Total de productos: ${newProductsAfterDelete.length}</h2>`;
     newProductsAfterDelete.map(p => {
         productsContainer.innerHTML += `
             <h3>Producto:</h3>
@@ -56,7 +56,7 @@ formAddProduct.addEventListener('submit', (e) => {
     socket.emit('addProduct', newProduct)
 })
 socket.on('newProductsAfterAdd', (newProductsAfterAdd) => {
-    productsContainer.innerHTML = "";
+    productsContainer.innerHTML = `<h2>Total de productos: ${newProductsAfterAdd.length}</h2>`;
     newProductsAfterAdd.map(p => {
         productsContainer.innerHTML += `
             <div>

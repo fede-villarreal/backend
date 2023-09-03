@@ -1,14 +1,18 @@
-import CartController from "./cart.controller.js";
+import Carts from "../dao/dbManagers/cart_manager.js";
 import Products from "../dao/dbManagers/product_manager.js";
 
+const cartManager = new Carts();
 const productManager = new Products();
 
 export default class ViewsController {
 
     static async getCart(req, res, next) {
         try {
-            const cart = CartController.getCartById
-            console.log(cart)
+            let { cid } = req.params;
+            if (cid.length !== 24) return res.send({ status: 'error', error: "El id del carrito debe tener 24 digitos" })
+
+            const cart = await cartManager.getCart(cid)
+            if (!cart) return res.send({ status: 'error', error: "Carrito no encontrado" })
 
             let products = cart.products.map(p => ({
                 ...p.product.toObject(),
@@ -82,7 +86,7 @@ export default class ViewsController {
 
     static async realTimeProducts(req, res, next) {
         try {
-            const products = ProductController.getProducts
+            const products = await productManager.getAll();
             res.render('realTimeProducts', {products})
         } catch (error) {
             next (error)
