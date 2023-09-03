@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import cartRouter from './mongoDB/carts.router.js';
+import productRouter from './mongoDB/products.router.js';
+import sessionRouter from './mongoDB/sessions.router.js'
+
+const router = Router();
+
+router.use('/carts', cartRouter)
+router.use('/products', productRouter)
+router.use('/sessions', sessionRouter)
+
+export default router;

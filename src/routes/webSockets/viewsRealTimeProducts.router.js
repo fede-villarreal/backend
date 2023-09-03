@@ -1,12 +1,10 @@
 import express from 'express';
-import Products from '../../dao/dbManagers/product_manager.js';
+import ViewsController from '../../controllers/views.controller.js';
+
 
 const router = express.Router();
-const pm = new Products();
 
-router.get('/', async (req, res) => {
-    const products = await pm.getAll()
-    res.render('realTimeProducts', {products})
-})
+// Ver productos en tiempo real con socketServer
+router.get('/', ViewsController.realTimeProducts)
 
 export default router;
