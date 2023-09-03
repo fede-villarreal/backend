@@ -1,5 +1,6 @@
 import Carts from "../dao/dbManagers/cart_manager.js";
 import Products from "../dao/dbManagers/product_manager.js";
+import UserDTO from "../dtos/user.dto.js";
 
 const cartManager = new Carts();
 const productManager = new Products();
@@ -59,6 +60,8 @@ export default class ViewsController {
     static async getProducts(req, res, next) {
         try {
             if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
+            const { first_name, last_name, age, email} = req.user;
+            const user = new UserDTO(first_name, last_name, age, email)
             const { limit = 10, page = 1, category, status, sort } = req.query;
             let query = {}
             if (category && status) {
@@ -71,7 +74,7 @@ export default class ViewsController {
             const { docs, hasPrevPage, hasNextPage, prevPage, nextPage } = await productManager.getProductsPaginate(limit, page, query, sort);
             let products = docs;
             res.render('home', {
-                user: req.session.user,
+                user,
                 products,
                 status,
                 hasPrevPage,
@@ -93,9 +96,12 @@ export default class ViewsController {
         }
     }
 
-    static async (req, res, next) {
+    static async current (req, res, next) {
         try {
-
+            if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
+            const { first_name, last_name, age, email} = req.user;
+            const user = new UserDTO(first_name, last_name, age, email)
+            res.render('current', {user})
         } catch (error) {
             next (error)
         }

@@ -14,6 +14,9 @@ router.get('/failregister', ViewsController.failRegister)
 // GET products with paginate
 router.get('/products', ViewsController.getProducts)
 
+// Mostrar usuario
+router.get('/current', ViewsController.current)
+
 
 // FileSystem:
 

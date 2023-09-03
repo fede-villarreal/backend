@@ -1,15 +1,11 @@
-import passport from "passport";
+import UserDTO from "../dtos/user.dto.js";
 
 export default class SessionController {
 
     static async login(req, res, next) {
         try {
-            req.session.user = {
-                name: `${req.user.first_name} ${req.user.last_name}`,
-                age: req.user.age,
-                email: req.user.email,
-                rol: 'user'
-            }
+            const { first_name, last_name, age, email} = req.user;
+            req.session.user = new UserDTO(first_name, last_name, age, email)
             res.redirect('/products')
         } catch (error) {
             next(error)
@@ -18,12 +14,8 @@ export default class SessionController {
 
     static async logout(req, res, next) {
         try {
-            req.session.destroy(err => {
-                if (err) {
-                    return res.json({ status: 'Logout ERROR', body: err })
-                }
-                res.send('Logout ok!')
-            })
+            req.session.destroy()
+            res.send('Logout ok!')
         } catch (error) {
             next(error)
         }
@@ -31,13 +23,20 @@ export default class SessionController {
 
     static async githubCallback(req, res, next) {
         try {
-            req.session.user = {
-                name: `${req.user.first_name} ${req.user.last_name}`,
-                age: req.user.age,
-                email: req.user.email,
-                rol: 'user'
-            }
+            const { first_name, last_name, age, email} = req.user;
+            req.session.user = new UserDTO(first_name, last_name, age, email)
             res.redirect('/products')
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async current(req, res, next) {
+        try {
+            if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
+            const { first_name, last_name, age, email} = req.user;
+            const user = new UserDTO(first_name, last_name, age, email)
+            res.send({status: 'success', payload: user})
         } catch (error) {
             next(error)
         }
