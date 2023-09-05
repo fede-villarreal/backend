@@ -59,7 +59,6 @@ export default class ViewsController {
 
     static async getProducts(req, res, next) {
         try {
-            if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
             const { first_name, last_name, age, email} = req.user;
             const user = new UserDTO(first_name, last_name, age, email)
             const { limit = 10, page = 1, category, status, sort } = req.query;
@@ -98,7 +97,6 @@ export default class ViewsController {
 
     static async current (req, res, next) {
         try {
-            if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
             const { first_name, last_name, age, email} = req.user;
             const user = new UserDTO(first_name, last_name, age, email)
             res.render('current', {user})

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { isAuth } from '../../config/passport.config.js'
 import ViewsController from '../../controllers/views.controller.js';
 
 const router = Router();
@@ -12,10 +13,10 @@ router.get('/register', ViewsController.register)
 router.get('/failregister', ViewsController.failRegister)
 
 // GET products with paginate
-router.get('/products', ViewsController.getProducts)
+router.get('/products', isAuth, ViewsController.getProducts)
 
 // Mostrar usuario
-router.get('/current', ViewsController.current)
+router.get('/current', isAuth, ViewsController.current)
 
 
 // FileSystem:

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import { isAuth } from '../../config/passport.config.js';
 import SessionController from "../../controllers/session.controller.js";
 
 const router = Router();
@@ -18,6 +19,6 @@ router.get('/github', passport.authenticate('github', { scope: ['user: email'] }
 router.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/' }), SessionController.githubCallback)
 
 // Mostrar usuario:
-router.get('/current', SessionController.current)
+router.get('/current', isAuth, SessionController.current)
 
 export default router;

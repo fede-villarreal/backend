@@ -82,11 +82,18 @@ const initializePassport = () => {
     passport.deserializeUser(async (id, done) => {
         let user = await userModel.findById(id);
         if (user != null) {
-            done (null, user)
+            done(null, user)
         } else {
             done(error);
         }
     })
+}
+
+export function isAuth(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect("/faillogin");
 }
 
 export default initializePassport;

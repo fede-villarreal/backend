@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { isAuth } from '../../config/passport.config.js';
+import { adminAuth } from '../../middleware/profile.middleware.js';
 import ProductController from '../../controllers/product.controller.js'
 
 const router = Router()
@@ -10,12 +12,12 @@ router.get('/', ProductController.getProducts)
 router.get('/:pid', ProductController.getProductById)
 
 // Crear producto
-router.post('/', ProductController.createProduct)
+router.post('/', isAuth, adminAuth, ProductController.createProduct)
 
 // Actualizar producto
-router.put('/:pid', ProductController.updateProduct)
+router.put('/:pid', isAuth, adminAuth, ProductController.updateProduct)
 
 // Borrar producto
-router.delete('/:pid', ProductController.deleteProduct)
+router.delete('/:pid', isAuth, adminAuth, ProductController.deleteProduct)
 
 export default router;

@@ -33,7 +33,6 @@ export default class SessionController {
 
     static async current(req, res, next) {
         try {
-            if (!req.user) return res.status(401).send('Error de autorización. Necesita loguearse primero!')
             const { first_name, last_name, age, email} = req.user;
             const user = new UserDTO(first_name, last_name, age, email)
             res.send({status: 'success', payload: user})
