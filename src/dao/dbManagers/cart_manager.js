@@ -1,4 +1,5 @@
 import cartModel from "../models/carts.js";
+import productModel from "../models/products.js";
 
 export default class Carts {
     /* constructor(){
@@ -83,5 +84,27 @@ export default class Carts {
 
         let result = await cartModel.updateOne({_id: cid}, cart)
         return result
+    }
+
+    pruchase = async (cid) => {
+        let cart = await cartModel.findOne({_id: cid})
+
+        cart.products.forEach(async p => {
+            let product = await productModel.findOne({_id: String(p.product._id)})
+            let productQuantity = p.quantity;
+
+            if (product.stock >= productQuantity) {
+
+                product.stock-= productQuantity
+
+                await productModel.updateOne({_id: product._id}, product)
+
+                cart.products = cart.products.filter(p => String(p.product._id) !== product._id)
+            }
+        });
+
+
+        let result = await cartModel.updateOne({_id: cid}, cart) /* 'finalizado' */
+        return result;
     }
 }

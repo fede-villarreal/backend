@@ -107,4 +107,16 @@ export default class CartService {
         return result
     }
 
+    async purchase(cid) {
+        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
+
+        const cart = await cartManager.getCart(cid)
+        if (!cart) throw new Error('No se pudo encontrar el carrito')
+
+        const result = await cartManager.pruchase(cid)
+        if (!result) throw new Error("No se pudo finalizar la compra")
+
+        return result;
+    }
+
 }

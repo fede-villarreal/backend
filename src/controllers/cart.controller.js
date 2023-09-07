@@ -77,4 +77,14 @@ export default class CartController {
         }
     }
 
+    static async purchase(req, res, next) {
+        try{
+            let { cid } = req.params;
+            let result = await cartService.purchase(cid)
+            res.send({status: 'success', payload: result})
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }
