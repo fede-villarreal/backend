@@ -86,25 +86,31 @@ export default class Carts {
         return result
     }
 
-    pruchase = async (cid) => {
+    purchase = async (cid) => {
         let cart = await cartModel.findOne({_id: cid})
 
-        cart.products.forEach(async p => {
-            let product = await productModel.findOne({_id: String(p.product._id)})
-            let productQuantity = p.quantity;
+        const update = async () => {
+            cart.products.forEach(async p => {
+                let product = await productModel.findOne({_id: String(p.product._id)})
+                let productQuantity = p.quantity;
+    
+                if (product.stock >= productQuantity) {
+    
+                    product.stock-= productQuantity
+    
+                    await productModel.updateOne({_id: product._id}, product)
+    
+                    cart.products = cart.products.filter(p => String(p.product._id) !== String(product._id))
+                    
+                    await cartModel.updateOne({_id: cid}, cart)
+                }
+            });
+        }
 
-            if (product.stock >= productQuantity) {
-
-                product.stock-= productQuantity
-
-                await productModel.updateOne({_id: product._id}, product)
-
-                cart.products = cart.products.filter(p => String(p.product._id) !== product._id)
-            }
-        });
-
-
-        let result = await cartModel.updateOne({_id: cid}, cart) /* 'finalizado' */
-        return result;
+        let result = async () => {
+            await update()
+            return await cartModel.updateOne({_id: cid}, cart)
+        }/* await cartModel.updateOne({_id: cid}, cart) */ /* 'finalizado' */
+        return result();
     }
 }

@@ -113,7 +113,7 @@ export default class CartService {
         const cart = await cartManager.getCart(cid)
         if (!cart) throw new Error('No se pudo encontrar el carrito')
 
-        const result = await cartManager.pruchase(cid)
+        const result = await cartManager.purchase(cid)
         if (!result) throw new Error("No se pudo finalizar la compra")
 
         return result;
