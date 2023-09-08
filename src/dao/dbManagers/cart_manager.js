@@ -110,7 +110,7 @@ export default class Carts {
         let result = async () => {
             await update()
             return await cartModel.updateOne({_id: cid}, cart)
-        }/* await cartModel.updateOne({_id: cid}, cart) */ /* 'finalizado' */
+        }
         return result();
     }
 }
