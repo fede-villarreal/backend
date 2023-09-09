@@ -14,16 +14,6 @@ export default class CartController {
         }
     }
 
-    static async createCart(req, res, next) {
-        try {
-            let { products } = req.body;
-            const result = await cartService.createCart(products)
-            res.send({ status: 'success', payload: result })
-        } catch (error) {
-            next(error)
-        }
-    }
-
     static async addProductToCart(req, res, next) {
         try {
             let { cid, pid } = req.params;

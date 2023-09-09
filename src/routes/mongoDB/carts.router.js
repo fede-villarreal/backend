@@ -8,8 +8,7 @@ const router = Router()
 // Obtener carrito por ID
 router.get('/:cid', isAuth, CartController.getCartById)
 
-// Crear carrito
-router.post('/', isAuth, CartController.createCart)
+// Crear carrito reservado para cuando se registra un usuario
 
 // Añadir producto al carrito
 router.post('/:cid/product/:pid', isAuth, userAuth, CartController.addProductToCart)
@@ -27,6 +26,6 @@ router.put('/:cid/products/:pid', isAuth, userAuth, CartController.updateProduct
 router.delete('/:cid', isAuth, userAuth, CartController.emptyCart)
 
 // Finalizar compra
-router.put('/:cid/purchase', /* isAuth, userAuth, */ CartController.purchase)
+router.post('/:cid/purchase', /* isAuth, userAuth, */ CartController.purchase)
 
 export default router;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { generateCode } from "../../utils.js";
 
 const ticketCollection = 'tickets';
 
@@ -6,7 +7,8 @@ const ticketSchema = mongoose.Schema({
     code: {
         type: String,
         unique: true,
-        required: [true, 'El código del ticket es requerido']
+        required: [true, 'El código del ticket es requerido'],
+        default: generateCode
     },
     purchase_datetime: {
         type: Date,
@@ -17,10 +19,7 @@ const ticketSchema = mongoose.Schema({
         required: true,
         default: 0
     },
-    purchaser: {
-        type: String,
-        required: true
-    },
+    purchaser: String,
     products: {
         type: [
             {

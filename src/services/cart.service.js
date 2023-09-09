@@ -1,8 +1,10 @@
 import Carts from "../dao/dbManagers/cart_manager.js";
 import Products from "../dao/dbManagers/product_manager.js";
+import Tickets from "../dao/dbManagers/ticket_manager.js";
 
 const cartManager = new Carts();
 const productManager = new Products();
+const ticketManager = new Tickets();
 
 export default class CartService {
 
@@ -71,7 +73,7 @@ export default class CartService {
         }
 
         const exist = await evaluation(products)
-        if(!exist) throw new Error('El Id de algún producto es incorrecto')
+        if (!exist) throw new Error('El Id de algún producto es incorrecto')
 
         let result = await cartManager.addMultipleProducts(cid, products)
         if (!result) throw new Error("No se pudo actualizar la lista de productos del carrito")
@@ -108,15 +110,73 @@ export default class CartService {
     }
 
     async purchase(cid) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
+        try {
+            if (cid.length !== 24) {
+                throw new Error("El id del carrito debe tener 24 dígitos");
+            }
 
-        const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error('No se pudo encontrar el carrito')
+            let cart = await cartManager.getCart(cid);
+            if (!cart) {
+                throw new Error('No se pudo encontrar el carrito');
+            }
 
-        const result = await cartManager.purchase(cid)
-        if (!result) throw new Error("No se pudo finalizar la compra")
+            let products = [...cart.products];
+            let purchasedProducts = [];
 
-        return result;
+            async function updateProductsAndCart() {
+                for (let p of products) {
+                    try {
+                        let product = await productManager.getProduct(String(p.product._id));
+                        let productQuantity = p.quantity;
+
+                        if (product.stock >= productQuantity) {
+                            product.stock -= productQuantity;
+                            await productManager.updateProduct(product._id, product);
+
+                            purchasedProducts.push({
+                                product: p.product,
+                                quantity: p.quantity,
+                            });
+
+                            await cartManager.deleteProductToCart(cid, String(product._id));
+                        }
+                    } catch (error) {
+                        throw new Error('Error al actualizar el stock de productos y el carrito');
+                    }
+                }
+            }
+
+            await updateProductsAndCart();
+
+            const purchaserMail = await cartManager.getPurchaser(cart);
+
+            const amount = purchasedProducts.reduce((acc, p) => {
+                return acc + p.product.price * p.quantity;
+            }, 0);
+
+            const productsDetail = purchasedProducts.map((p) => {
+                return {
+                    product: String(p.product._id),
+                    quantity: p.quantity
+                };
+            });
+
+            const ticket = await ticketManager.addTicket({
+                amount: amount,
+                purchaser: purchaserMail,
+                products: productsDetail
+            });
+
+            if (!ticket) {
+                throw new Error("No se pudo crear el ticket");
+            }
+
+            return ticket;
+
+        } catch (error) {
+            throw error;
+        }
     }
+
 
 }
