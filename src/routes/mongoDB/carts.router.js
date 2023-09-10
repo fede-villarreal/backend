@@ -26,6 +26,6 @@ router.put('/:cid/products/:pid', isAuth, userAuth, CartController.updateProduct
 router.delete('/:cid', isAuth, userAuth, CartController.emptyCart)
 
 // Finalizar compra
-router.post('/:cid/purchase', /* isAuth, userAuth, */ CartController.purchase)
+router.post('/:cid/purchase', isAuth, userAuth, CartController.purchase)
 
 export default router;
