@@ -55,4 +55,13 @@ export default class ProductController {
         }
     }
 
+    static async mockingProducts(req, res, next) {
+        try {
+            let result = await productService.mockingProducts()
+            res.send({status: 'success', payload: result})
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }

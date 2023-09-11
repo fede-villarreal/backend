@@ -1,4 +1,5 @@
 import Products from "../dao/dbManagers/product_manager.js";
+import { generateProducts } from "../utils.js";
 
 const productManager = new Products();
 
@@ -73,5 +74,15 @@ export default class ProductService {
         if (!result) throw new Error("No se pudo eliminar el producto")
 
         return result;
+    }
+
+    async mockingProducts() {
+        let products = [];
+
+        for (let i = 0; i < 100; i++) {
+            products.push(generateProducts())
+        }
+
+        return products;
     }
 }

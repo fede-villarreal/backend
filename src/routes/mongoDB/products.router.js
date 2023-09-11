@@ -8,6 +8,9 @@ const router = Router()
 // Obtener productos
 router.get('/', ProductController.getProducts)
 
+// Productos de prueba (Mocks)
+router.get('/mockingproducts', ProductController.mockingProducts)
+
 // Obtener producto por Id
 router.get('/:pid', ProductController.getProductById)
 
