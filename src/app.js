@@ -20,6 +20,8 @@ import apiRouter from './routes/api.router.js';
 import viewsRouter from './routes/views.router.js';
 // Errors:
 import errorHandler from './middleware/errors/indexError.js'
+// Compression:
+import compression from 'express-compression';
 
 const app = express();
 const PORT = 8080;
@@ -61,6 +63,11 @@ app.use(session({
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Compression:
+app.use(compression({
+    brotli: { enabled: true, zlib: {} }
+}));
 
 app.use('/api', apiRouter)
 
