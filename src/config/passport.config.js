@@ -5,6 +5,9 @@ import userModel from "../dao/models/user.js";
 import { createHash, isValidPassword } from '../utils.js';
 import "dotenv/config";
 import CartService from "../services/cart.service.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { registerErrorInfo, loginErrorInfo, githubErrorInfo, unauthorizedUserErrorInfo } from '../services/errors/info.js';
 
 const cartService = new CartService();
 
@@ -33,7 +36,12 @@ const initializePassport = () => {
                 let result = await userModel.create(newUser)
                 return done(null, result)
             } catch (error) {
-                return done('Error al obtener al usuario ' + error);
+                return done(CustomError.createError({
+                    name: 'Registro fallido',
+                    cause: registerErrorInfo(),
+                    message: error,
+                    code: EErrors.INTERNAL_SERVER_ERROR
+                }));
             }
         }))
 
@@ -48,7 +56,12 @@ const initializePassport = () => {
                 if (!isValidPassword(user, password)) return done(null, false)
                 return done(null, user);
             } catch (error) {
-                return done(error)
+                return done(CustomError.createError({
+                    name: 'Loggin fallido',
+                    cause: loginErrorInfo(),
+                    message: error,
+                    code: EErrors.INTERNAL_SERVER_ERROR
+                }))
             }
         }))
 
@@ -75,7 +88,12 @@ const initializePassport = () => {
                 done(null, user)
             }
         } catch (error) {
-            return done(error)
+            return done(CustomError.createError({
+                name: 'Loggin fallido',
+                cause: githubErrorInfo(),
+                message: error,
+                code: EErrors.INTERNAL_SERVER_ERROR
+            }))
         }
 
     }))
@@ -98,6 +116,12 @@ export function isAuth(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
+    CustomError.createError({
+        name: 'Usuario no autorizado',
+        cause: unauthorizedUserErrorInfo(),
+        message: 'Acción no disponible',
+        code: EErrors.UNAUTHORIZED
+    })
     res.redirect("/faillogin");
 }
 

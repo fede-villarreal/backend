@@ -1,6 +1,9 @@
 import Carts from "../dao/dbManagers/cart_manager.js";
 import Products from "../dao/dbManagers/product_manager.js";
 import Tickets from "../dao/dbManagers/ticket_manager.js";
+import CustomError from "./errors/CustomError.js";
+import EErrors from "./errors/enums.js";
+import { validateIdErrorInfo, getCartErrorInfo, getProductByIdErrorInfo, addProductToCartErrorInfo, deleteProductToCartErrorInfo, addMultipleProductsToCartErrorInfo, updateProductQuantityErrorInfo, emptyCartErrorInfo, purchaseErrorInfo } from './errors/info.js';
 
 const cartManager = new Carts();
 const productManager = new Products();
@@ -9,10 +12,20 @@ const ticketManager = new Tickets();
 export default class CartService {
 
     async getCartById(cid) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
+        if (cid.length !== 24) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: validateIdErrorInfo(cid),
+            message: 'Error tratando de obtener carrito',
+            code: EErrors.BAD_REQUEST
+        })
 
         const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error("Carrito no encontrado")
+        if (!cart) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: getCartErrorInfo(cid),
+            message: 'El carrito solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         return cart
     }
@@ -25,43 +38,103 @@ export default class CartService {
     }
 
     async addProductToCart(cid, pid) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
-        if (pid.length !== 24) throw new Error("El id del producto debe tener 24 digitos")
+        if (cid.length !== 24) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: validateIdErrorInfo(cid),
+            message: 'Error tratando de obtener carrito',
+            code: EErrors.BAD_REQUEST
+        })
+        if (pid.length !== 24) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: validateIdErrorInfo(pid),
+            message: 'Error tratando de obtener producto',
+            code: EErrors.BAD_REQUEST
+        })
 
         const product = await productManager.getProduct(pid)
-        if (!product) throw new Error("Producto no encontrado")
+        if (!product) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: getProductByIdErrorInfo(pid),
+            message: 'El producto solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error("Carrito no encontrado")
+        if (!cart) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: getCartErrorInfo(cid),
+            message: 'El carrito solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         let result = await cartManager.addProductToCart(cid, pid)
-        if (!result) throw new Error("No se agregar el producto al carrito")
+        if (!result) CustomError.createError({
+            name: 'Error al agregar el producto al carrito',
+            cause: addProductToCartErrorInfo(cid, pid),
+            message: 'Ocurrio un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result
     }
 
     async deleteProductToCart(cid, pid) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
-        if (pid.length !== 24) throw new Error("El id del producto debe tener 24 digitos")
+        if (cid.length !== 24) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: validateIdErrorInfo(cid),
+            message: 'Error tratando de obtener carrito',
+            code: EErrors.BAD_REQUEST
+        })
+        if (pid.length !== 24) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: validateIdErrorInfo(pid),
+            message: 'Error tratando de obtener producto',
+            code: EErrors.BAD_REQUEST
+        })
 
         const product = await productManager.getProduct(pid)
-        if (!product) throw new Error("Producto no encontrado")
+        if (!product) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: getProductByIdErrorInfo(pid),
+            message: 'El producto solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error("Carrito no encontrado")
+        if (!cart) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: getCartErrorInfo(cid),
+            message: 'El carrito solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         let result = await cartManager.deleteProductToCart(cid, pid)
-        if (!result) throw new Error("No se borrar el producto del carrito")
+        if (!result) CustomError.createError({
+            name: 'Error al borrar producto del carrito',
+            cause: deleteProductToCartErrorInfo(cid, pid),
+            message: 'Ocurrio un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result
     }
 
 
     async addMultipleProductsToCart(cid, products) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
+        if (cid.length !== 24) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: validateIdErrorInfo(cid),
+            message: 'Error tratando de obtener carrito',
+            code: EErrors.BAD_REQUEST
+        })
 
         const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error("Carrito no encontrado")
+        if (!cart) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: getCartErrorInfo(cid),
+            message: 'El carrito solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         const evaluation = async (listOfProducts) => {
             for (let i = 0; i < listOfProducts.length; i++) {
@@ -76,35 +149,80 @@ export default class CartService {
         if (!exist) throw new Error('El Id de algún producto es incorrecto')
 
         let result = await cartManager.addMultipleProducts(cid, products)
-        if (!result) throw new Error("No se pudo actualizar la lista de productos del carrito")
+        if (!result) CustomError.createError({
+            name: 'Error al agregar productos al carrito',
+            cause: addMultipleProductsToCartErrorInfo(cid, products),
+            message: 'Ocurrió un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result
     }
 
     async updateProductQuantity(cid, pid, productQuantity) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
-        if (pid.length !== 24) throw new Error("El id del producto debe tener 24 digitos")
+        if (cid.length !== 24) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: validateIdErrorInfo(cid),
+            message: 'Error tratando de obtener carrito',
+            code: EErrors.BAD_REQUEST
+        })
+        if (pid.length !== 24) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: validateIdErrorInfo(pid),
+            message: 'Error tratando de obtener producto',
+            code: EErrors.BAD_REQUEST
+        })
 
         const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error('No se pudo encontrar el carrito')
+        if (!cart) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: getCartErrorInfo(cid),
+            message: 'El carrito solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         const product = await productManager.getProduct(pid)
-        if (!product) throw new Error("Producto no encontrado")
+        if (!product) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: getProductByIdErrorInfo(pid),
+            message: 'El producto solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         let result = await cartManager.updateQuantity(cid, pid, productQuantity)
-        if (!result) throw new Error("No se pudo actualizar la cantidad de productos en el carrito")
+        if (!result) CustomError.createError({
+            name: 'Error al actualizar productos en el carrito',
+            cause: updateProductQuantityErrorInfo(cid, pid, productQuantity),
+            message: 'Ocurrió un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result
     }
 
     async emptyCart(cid) {
-        if (cid.length !== 24) throw new Error("El id del carrito debe tener 24 digitos")
+        if (cid.length !== 24) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: validateIdErrorInfo(cid),
+            message: 'Error tratando de obtener carrito',
+            code: EErrors.BAD_REQUEST
+        })
 
         const cart = await cartManager.getCart(cid)
-        if (!cart) throw new Error('No se pudo encontrar el carrito')
+        if (!cart) CustomError.createError({
+            name: 'Id del carrito incorrecto',
+            cause: getCartErrorInfo(cid),
+            message: 'El carrito solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         let result = await cartManager.emptyCart(cid)
-        if (!result) throw new Error("No se pudo vaciar el carrito")
+        if (!result) CustomError.createError({
+            name: 'Error al limpiar el carrito',
+            cause: emptyCartErrorInfo(cid),
+            message: 'Ocurrió un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result
     }
@@ -112,12 +230,22 @@ export default class CartService {
     async purchase(cid) {
         try {
             if (cid.length !== 24) {
-                throw new Error("El id del carrito debe tener 24 dígitos");
+                CustomError.createError({
+                    name: 'Id del carrito incorrecto',
+                    cause: validateIdErrorInfo(cid),
+                    message: 'Error tratando de obtener carrito',
+                    code: EErrors.BAD_REQUEST
+                })
             }
 
             let cart = await cartManager.getCart(cid);
             if (!cart) {
-                throw new Error('No se pudo encontrar el carrito');
+                CustomError.createError({
+                    name: 'Id del carrito incorrecto',
+                    cause: getCartErrorInfo(cid),
+                    message: 'El carrito solicitado no existe',
+                    code: EErrors.NOT_FOUND
+                })
             }
 
             let products = [...cart.products];
@@ -168,7 +296,12 @@ export default class CartService {
             });
 
             if (!ticket) {
-                throw new Error("No se pudo crear el ticket");
+                CustomError.createError({
+                    name: 'Error al crear el ticket',
+                    cause: purchaseErrorInfo(),
+                    message: 'Ocurrió un error en el servidor',
+                    code: EErrors.INTERNAL_SERVER_ERROR
+                })
             }
 
             return ticket;

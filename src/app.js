@@ -18,6 +18,9 @@ import initializePassport from './config/passport.config.js';
 // Routes
 import apiRouter from './routes/api.router.js';
 import viewsRouter from './routes/views.router.js';
+// Errors:
+import errorHandler from './middleware/errors/indexError.js'
+
 const app = express();
 const PORT = 8080;
 
@@ -60,6 +63,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api', apiRouter)
+
+// Errores:
+app.use(errorHandler)
 
 // Configuración plantillas
 app.engine('handlebars', handlebars.engine());

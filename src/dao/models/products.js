@@ -14,7 +14,8 @@ const productSchema = mongoose.Schema({
     },
     code: {
         type: String,
-        required: [true, 'El código del producto es requerido']
+        required: [true, 'El código del producto es requerido'],
+        unique: true
     },
     price: {
         type: Number,

@@ -1,5 +1,8 @@
 import Products from "../dao/dbManagers/product_manager.js";
 import { generateProducts } from "../utils.js";
+import CustomError from "./errors/CustomError.js";
+import EErrors from "./errors/enums.js";
+import { validateIdErrorInfo, getProductsErrorInfo, getProductByIdErrorInfo, createProductErrorInfo, requiredFieldsToCreateProductErrorInfo, updateProductErrorInfo, deleteProductErrorInfo } from './errors/info.js'
 
 const productManager = new Products();
 
@@ -16,16 +19,31 @@ export default class ProductService {
         }
 
         const products = await productManager.getProductsPaginate(limit, page, query, sort);
-        if (!products) throw new Error("No se encontraron productos")
+        if (!products) CustomError.createError({
+            name: 'Error al obtener los productos',
+            cause: getProductsErrorInfo(),
+            message: 'Ocurrio un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return products;
     }
 
     async getProductById(pid) {
-        if (pid.length !== 24) throw new Error("El id del producto debe tener 24 digitos")
+        if (pid.length !== 24) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: validateIdErrorInfo(pid),
+            message: 'Error tratando de obtener producto',
+            code: EErrors.BAD_REQUEST
+        })
 
         const product = await productManager.getProduct(pid)
-        if (!product) throw new Error("Producto no encontrado")
+        if (!product) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: getProductByIdErrorInfo(pid),
+            message: 'El producto solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         return product;
     }
@@ -42,16 +60,31 @@ export default class ProductService {
             thumbnails
         }
 
-        if (!title || !description || !code || !price || !stock || !category) throw new Error("Los campos title, description, code, price, stock y category son obligatorios")
+        if (!title || !description || !code || !price || !stock || !category) CustomError.createError({
+            name: 'Campos incompletos',
+            cause: requiredFieldsToCreateProductErrorInfo(title, description, code, price, stock, category),
+            message: 'existen campos obligatorios sin completar',
+            code: EErrors.BAD_REQUEST
+        })
 
         const result = await productManager.saveProducts(newProduct)
-        if (!result) throw new Error("No se pudo crear el producto")
+        if (!result) CustomError.createError({
+            name: 'Error al crear el producto',
+            cause: createProductErrorInfo(newProduct),
+            message: 'Ocurrio un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result;
     }
 
     async updateProduct(pid, fieldsToUpdate) {
-        if (pid.length !== 24) throw new Error("El id del producto debe tener 24 digitos")
+        if (pid.length !== 24) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: validateIdErrorInfo(pid),
+            message: 'Error tratando de obtener producto',
+            code: EErrors.BAD_REQUEST
+        })
 
         const products = await productManager.getAll()
         const productIndex = await products.findIndex(p => String(p._id) === pid)
@@ -59,19 +92,39 @@ export default class ProductService {
         let update = { ...products[productIndex], ...fieldsToUpdate }
 
         let result = await productManager.updateProduct(pid, update)
-        if (!result) throw new Error("No se pudo actualizar el producto")
+        if (!result) CustomError.createError({
+            name: 'Error al actualizar el producto',
+            cause: updateProductErrorInfo(pid, update),
+            message: 'Ocurrio un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result;
     }
 
     async deleteProduct(pid) {
-        if (pid.length !== 24) throw new Error("El id del producto debe tener 24 digitos")
+        if (pid.length !== 24) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: validateIdErrorInfo(pid),
+            message: 'Error tratando de obtener producto',
+            code: EErrors.BAD_REQUEST
+        })
 
         const product = await productManager.getProduct(pid)
-        if (!product) throw new Error("Producto no encontrado")
+        if (!product) CustomError.createError({
+            name: 'Id del producto incorrecto',
+            cause: getProductByIdErrorInfo(pid),
+            message: 'El producto solicitado no existe',
+            code: EErrors.NOT_FOUND
+        })
 
         let result = await productManager.deleteProduct(pid)
-        if (!result) throw new Error("No se pudo eliminar el producto")
+        if (!result) CustomError.createError({
+            name: 'Error al eliminar el producto',
+            cause: deleteProductErrorInfo(pid),
+            message: 'Ocurrio un error en el servidor',
+            code: EErrors.INTERNAL_SERVER_ERROR
+        })
 
         return result;
     }
