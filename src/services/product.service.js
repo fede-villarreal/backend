@@ -1,5 +1,5 @@
 import Products from "../dao/dbManagers/product_manager.js";
-import { generateProducts } from "../utils.js";
+import { generateProducts } from "../utils/utils.js";
 import CustomError from "./errors/CustomError.js";
 import EErrors from "./errors/enums.js";
 import { validateIdErrorInfo, getProductsErrorInfo, getProductByIdErrorInfo, createProductErrorInfo, requiredFieldsToCreateProductErrorInfo, updateProductErrorInfo, deleteProductErrorInfo } from './errors/info.js'

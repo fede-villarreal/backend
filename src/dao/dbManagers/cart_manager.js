@@ -3,10 +3,7 @@ import productModel from "../models/products.js";
 import userModel from '../models/user.js';
 
 export default class Carts {
-    /* constructor(){
-        console.log('Trabajando con DB')
-    }
- */
+
     getCart = async (cid) => {
         let cart = await cartModel.findOne({_id: cid})
         return cart

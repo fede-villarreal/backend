@@ -1,7 +1,8 @@
 import express from 'express';
+import path from 'path';
 /* import productsRouter from './routes/fileSystem/products.router.js'; */
 /* import cartsRouter from './routes/fileSystem/carts.router.js'; */
-import { __dirname } from './utils.js';
+import { __dirname } from './utils/utils.js';
 import handlebars from 'express-handlebars';
 import { Server } from 'socket.io';
 /* import ProductManager from './dao/fileManagers/product_manager/product_manager.js'; */
@@ -22,6 +23,8 @@ import viewsRouter from './routes/views.router.js';
 import errorHandler from './middleware/errors/indexError.js'
 // Compression:
 import compression from 'express-compression';
+// Logger:
+import loggerMiddleware from './middleware/logger.middleware.js';
 
 const app = express();
 const PORT = 8080;
@@ -69,6 +72,10 @@ app.use(compression({
     brotli: { enabled: true, zlib: {} }
 }));
 
+// Logger:
+app.use(loggerMiddleware) // ruta: '/api/loggerTest'
+
+// Rutas:
 app.use('/api', apiRouter)
 
 // Errores:
@@ -76,9 +83,9 @@ app.use(errorHandler)
 
 // Configuración plantillas
 app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'handlebars');
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(path.join(__dirname, '../public')));
 app.use('/', viewsRouter)
 
 // Escuchar la conexión

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { generateCode } from "../../utils.js";
+import { generateCode } from "../../utils/utils.js";
 
 const ticketCollection = 'tickets';
 
