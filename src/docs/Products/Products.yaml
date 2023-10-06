@@ -1,0 +1,28 @@
+paths:
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Obtener todos los productos
+    post:
+      tags:
+        - Products
+      summary: Crear producto
+  /api/products/{pid}:
+    get:
+      tags:
+        - Products
+      summary: Obtener producto por Id
+    put:
+      tags:
+        - Products
+      summary: Actualizar producto
+    delete:
+      tags:
+        - Products
+      summary: Borrar producto
+  /api/products/mockingproducts:
+    get:
+      tags:
+        - Products
+      summary: Obtener productos de prueba (Mocks)

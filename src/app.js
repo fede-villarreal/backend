@@ -25,6 +25,9 @@ import errorHandler from './middleware/errors/indexError.js'
 import compression from 'express-compression';
 // Logger:
 import loggerMiddleware from './middleware/logger.middleware.js';
+// Documentacion:
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
 
 const app = express();
 const PORT = 8080;
@@ -80,6 +83,21 @@ app.use('/api', apiRouter)
 
 // Errores:
 app.use(errorHandler)
+
+// Documentacion:
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Documentacion de las APIs',
+            description: 'Descripción de los modulos de productos y carrito',
+            version: '1.0.0',
+        }
+    },
+    apis: [`${process.cwd()}/src/docs/**/*.yaml`]
+}
+const specs = swaggerJSDoc(swaggerOptions);
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 // Configuración plantillas
 app.engine('handlebars', handlebars.engine());

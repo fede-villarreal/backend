@@ -1,0 +1,32 @@
+paths:
+  /api/carts/{cid}:
+    get:
+      tags:
+        - Cart
+      summary: Obtener carrito por ID
+    put:
+      tags:
+        - Cart
+      summary: Añadir multiples productos al carrito
+    delete:
+      tags:
+        - Cart
+      summary: Vaciar carrito
+  /api/carts/{cid}/product/{pid}:
+    post:
+      tags:
+        - Cart
+      summary: Añadir producto al carrito
+    delete:
+      tags:
+        - Cart
+      summary: Borrar producto del carrito
+    put:
+      tags:
+        - Cart
+      summary: Actualizar cantidad de un producto del carrito
+  /api/carts/{cid}/purchase:
+    post:
+      tags:
+        - Cart
+      summary: Finalizar compra
